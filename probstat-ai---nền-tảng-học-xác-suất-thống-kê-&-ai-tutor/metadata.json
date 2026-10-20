@@ -1,0 +1,6 @@
+{
+  "name": "ProbStat AI - Nền Tảng Học Xác Suất Thống Kê & AI Tutor",
+  "description": "Nền tảng học tập thông minh chuyên biệt cho môn Xác suất Thống kê tích hợp AI Tutor 4 bước, OCR chấm điểm tự luận, giọng nói thông minh, bản đồ tư duy và chuẩn đoán lỗ hổng kiến thức.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
