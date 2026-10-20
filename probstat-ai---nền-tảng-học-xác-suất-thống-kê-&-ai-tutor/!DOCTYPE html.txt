@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>probstat-ai – Nền tảng học Xác suất Thống kê & AI Tutor</title>
+  <!-- Google Fonts & FontAwesome Icons (dạng font chữ, không phải file ảnh) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    /* =========================================================
+       LIGHT THEME CSS VARIABLES & BASE STYLES
+       ========================================================= */
+    :root {
+      --bg-body: #f8fafc;
+      --bg-surface: #ffffff;
+      --bg-sidebar: #ffffff;
+      --primary: #2563eb;
+      --primary-light: #eff6ff;
+      --primary-hover: #1d4ed8;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --success: #10b981;
+      --success-light: #ecfdf5;
+      --warning: #f59e0b;
+      --warning-light: #fffbeb;
+      --danger: #ef4444;
+      --danger-light: #fef2f2;
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+      --radius: 12px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-body);
+      color: var(--text-main);
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Layout Structure */
+    .sidebar {
+      width: 280px;
+      background-color: var(--bg-sidebar);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 100;
+    }
+
+    .brand {
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .brand-icon {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--primary), #3b82f6);
+      color: white;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 18px;
+    }
+
+    .brand-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .brand-title span {
+      color: var(--primary);
+    }
+
+    .nav-menu {
+      list-style: none;
+      padding: 16px 12px;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .nav-item {
+      margin-bottom: 4px;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      color: var(--text-muted);
+      text-decoration: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .nav-link:hover, .nav-link.active {
+      background-color: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .nav-link i {
+      font-size: 16px;
+      width: 20px;
+      text-align: center;
+    }
+
+    .main-content {
+      margin-left: 280px;
+      flex: 1;
+      padding: 32px;
+      max-width: 1200px;
+    }
+
+    .header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 28px;
+      background-color: var(--bg-surface);
+      padding: 16px 24px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .header-title h1 {
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    .header-title p {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .user-profile-badge {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--bg-body);
+      padding: 6px 12px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+    }
+
+    .avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background-color: var(--primary);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    /* Cards & Components */
+    .card {
+      background-color: var(--bg-surface);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-main);
+    }
+
+    .tab-section {
+      display: none;
+    }
+
+    .tab-section.active {
+      display: block;
+    }
+
+    /* Button styles */
+    .btn {
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      border: 1px solid transparent;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-hover);
+    }
+
+    .btn-outline {
+      background-color: transparent;
+      border-color: var(--border);
+      color: var(--text-main);
+    }
+
+    .btn-outline:hover {
+      background-color: var(--bg-body);
+    }
+
+    .btn-success {
+      background-color: var(--success);
+      color: white;
+    }
+
+    /* 4-Step Stepper Component */
+    .stepper {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      position: relative;
+    }
+
+    .stepper::before {
+      content: '';
+      position: absolute;
+      top: 20px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background-color: var(--border);
+      z-index: 1;
+    }
+
+    .step-item {
+      position: relative;
+      z-index: 2;
+      background-color: var(--bg-surface);
+      padding: 0 8px;
+      text-align: center;
+      flex: 1;
+    }
+
+    .step-circle {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: var(--bg-body);
+      border: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 8px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .step-item.active .step-circle {
+      background-color: var(--primary);
+      border-color: var(--primary);
+      color: white;
+    }
+
+    .step-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .step-item.active .step-title {
+      color: var(--primary);
+    }
+
+    /* Canvas Drawing Area */
+    .canvas-container {
+      border: 2px dashed var(--border);
+      border-radius: 8px;
+      background: #fafafa;
+      position: relative;
+      margin-bottom: 16px;
+    }
+
+    canvas {
+      width: 100%;
+      height: 260px;
+      display: block;
+      cursor: crosshair;
+    }
+
+    .canvas-toolbar {
+      display: flex;
+      gap: 8px;
+      padding: 8px;
+      background: var(--bg-surface);
+      border-top: 1px solid var(--border);
+      border-radius: 0 0 8px 8px;
+    }
+
+    /* Alert / Strategy Notice Box */
+    .strategy-box {
+      background-color: var(--warning-light);
+      border: 1px solid var(--warning);
+      border-radius: 8px;
+      padding: 16px;
+      margin-top: 16px;
+      color: #92400e;
+      font-size: 14px;
+    }
+
+    .strategy-box strong {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+
+    /* Grid layout helpers */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    /* Forum & Questions */
+    .forum-post {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 12px;
+      background: var(--bg-surface);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .badge-danger {
+      background: var(--danger-light);
+      color: var(--danger);
+    }
+
+    .badge-success {
+      background: var(--success-light);
+      color: var(--success);
+    }
+
+    /* Mindmap Box */
+    .mindmap-node {
+      border: 1px solid var(--primary);
+      background-color: var(--primary-light);
+      color: var(--primary);
+      padding: 12px 20px;
+      border-radius: 20px;
+      text-align: center;
+      font-weight: 600;
+      margin: 8px auto;
+      width: fit-content;
+    }
+
+    .mindmap-tree {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 20px;
+    }
+
+    .mindmap-subnode {
+      border: 1px solid var(--border);
+      background: white;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      text-align: center;
+      box-shadow: var(--shadow-sm);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- SIDEBAR NAVIGATION -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-icon"><i class="fa-solid fa-calculator"></i></div>
+      <div class="brand-title">probstat<span>-ai</span></div>
+    </div>
+    <ul class="nav-menu">
+      <li class="nav-item">
+        <a class="nav-link active" onclick="switchTab('tab-step4')">
+          <i class="fa-solid fa-list-check"></i> 1. Quy trình 4 Bước
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" onclick="switchTab('tab-tutor')">
+          <i class="fa-solid fa-chalkboard-user"></i> 2. AI Tutor & IPAD
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" onclick="switchTab('tab-voice')">
+          <i class="fa-solid fa-microphone"></i> 3. Giọng nói & Bảng vẽ
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" onclick="switchTab('tab-essay')">
+          <i class="fa-solid fa-file-pen"></i> 4. 5 Bài tập tự luận
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" onclick="switchTab('tab-quiz')">
+          <i class="fa-solid fa-square-check"></i> 5. Bài tập trắc nghiệm
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" onclick="switchTab('tab-qa')">
+          <i class="fa-solid fa-comments"></i> 6. Phòng Vấn đáp AI
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" onclick="switchTab('tab-stats')">
+          <i class="fa-solid fa-chart-pie"></i> 7. Thống kê lỗi sai
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" onclick="switchTab('tab-mindmap')">
+          <i class="fa-solid fa-sitemap"></i> 8. Bản đồ tư duy
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" onclick="switchTab('tab-forum')">
+          <i class="fa-solid fa-users"></i> 9. Diễn đàn điện tử
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" onclick="switchTab('tab-profile')">
+          <i class="fa-solid fa-id-card"></i> 10. Hồ sơ AI cá nhân
+        </a>
+      </li>
+    </ul>
+  </aside>
+
+  <!-- MAIN CONTENT AREA -->
+  <main class="main-content">
+    
+    <!-- Top Header Bar -->
+    <div class="header-bar">
+      <div class="header-title">
+        <h1 id="page-title">Quy trình dạy học 4 bước</h1>
+        <p>Hệ thống AI trợ giảng Xác suất Thống kê thông minh</p>
+      </div>
+      <div class="user-profile-badge">
+        <div class="avatar">HV</div>
+        <div>
+          <div style="font-size: 13px; font-weight: 600;">Học viên XSTK</div>
+          <div style="font-size: 11px; color: var(--text-muted);">Trình độ: Trung cấp</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TÍNH NĂNG 1: Quy trình 4 bước -->
+    <section id="tab-step4" class="tab-section active">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title"><i class="fa-solid fa-diagram-project" style="color:var(--primary);"></i> Dạy học Định lý Bayes & Phân phối Xác suất</span>
+          <span class="badge">Phương pháp 4 Bước</span>
+        </div>
+
+        <div class="stepper">
+          <div class="step-item active" id="step-1">
+            <div class="step-circle">1</div>
+            <div class="step-title">Khái niệm</div>
+          </div>
+          <div class="step-item" id="step-2">
+            <div class="step-circle">2</div>
+            <div class="step-title">Định lý & Công thức</div>
+          </div>
+          <div class="step-item" id="step-3">
+            <div class="step-circle">3</div>
+            <div class="step-title">Phân tích Barem</div>
+          </div>
+          <div class="step-item" id="step-4">
+            <div class="step-circle">4</div>
+            <div class="step-title">Chiến lược vận dụng</div>
+          </div>
+        </div>
+
+        <div id="step-content-box" style="background: var(--bg-body); padding: 20px; border-radius: 8px; border: 1px solid var(--border);">
+          <h3 style="margin-bottom: 10px; color: var(--primary);">Bước 1: Tiếp cận Khái niệm Định lý Bayes</h3>
+          <p style="font-size: 14px; line-height: 1.6; color: var(--text-main);">
+            Định lý Bayes cho phép cập nhật xác suất của một giả thuyết dựa trên bằng chứng mới thu thập được. Trong thực tế, đây là nền tảng của các mô hình Machine Learning phân loại và chẩn đoán y khoa.
+          </p>
+        </div>
+
+        <div style="margin-top: 20px; display: flex; justify-content: space-between;">
+          <button class="btn btn-outline" onclick="prevStep()"><i class="fa-solid fa-arrow-left"></i> Bước trước</button>
+          <button class="btn btn-primary" onclick="nextStep()">Bước tiếp theo <i class="fa-solid fa-arrow-right"></i></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- TÍNH NĂNG 2: AI Tutor Chấm điểm Barem & IPAD Whiteboard -->
+    <section id="tab-tutor" class="tab-section">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title"><i class="fa-solid fa-pen-ruler" style="color:var(--primary);"></i> Bảng viết IPAD & AI Chấm điểm bằng Barem</span>
+          <span class="badge badge-success">Chỉ đưa chiến lược - Không đưa lời giải</span>
+        </div>
+
+        <div class="grid-2">
+          <div>
+            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 8px;">Tương tác viết bài làm qua màn hình IPAD (sử dụng chuột hoặc bút cảm ứng):</p>
+            <div class="canvas-container">
+              <canvas id="ipadCanvas"></canvas>
+              <div class="canvas-toolbar">
+                <button class="btn btn-outline" style="padding:4px 8px; font-size:12px;" onclick="clearCanvas()"><i class="fa-solid fa-trash"></i> Xóa bảng</button>
+                <input type="file" id="fileUpload" style="display:none;" onchange="handleFileUpload(event)">
+                <button class="btn btn-outline" style="padding:4px 8px; font-size:12px;" onclick="document.getElementById('fileUpload').click()"><i class="fa-solid fa-file-pdf"></i> Tải PDF / Ảnh bài làm</button>
+              </div>
+            </div>
+            <button class="btn btn-primary" style="width: 100%;" onclick="evaluateHandwriting()"><i class="fa-solid fa-wand-magic-sparkles"></i> AI Tutor Chấm điểm theo Barem</button>
+          </div>
+
+          <div>
+            <div style="border: 1px solid var(--border); padding: 16px; border-radius: 8px; background: white;">
+              <h4 style="font-size: 14px; margin-bottom: 10px; color: var(--text-main);"><i class="fa-solid fa-list-check"></i> Cập nhật Barem điểm tự động:</h4>
+              <ul style="font-size: 13px; padding-left: 20px; color: var(--text-muted); line-height: 1.8;">
+                <li>Xác định biến cố & Không gian mẫu (0.5d)</li>
+                <li>Áp dụng công thức nhân / cộng xác suất (1.0đ)</li>
+                <li>Tính toán chỉ số kỳ vọng E(X) và Phương sai V(X) (1.0đ)</li>
+              </ul>
+              <div id="evalResult" style="display:none; margin-top: 15px;">
+                <hr style="border:0; border-top: 1px dashed var(--border); margin: 10px 0;">
+                <div style="font-weight: 600; color: var(--success); font-size: 14px;">Kết quả phân tích bài làm:</div>
+                <div class="strategy-box">
+                  <strong><i class="fa-solid fa-lightbulb"></i> Chiến lược gợi ý khắc phục:</strong>
+                  Em đã gọi đúng biến cố nhưng nhầm lẫn giữa công thức xác suất có điều kiện P(A|B) và P(AB). Hãy xem lại thứ tự xảy ra của biến cố điều kiện trước khi thế số!
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TÍNH NĂNG 3: Tương tác giọng nói -->
+    <section id="tab-voice" class="tab-section">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title"><i class="fa-solid fa-microphone-lines" style="color:var(--primary);"></i> AI Voice Tutor - Hỏi đáp qua giọng nói & Bảng IPAD</span>
+        </div>
+
+        <div style="text-align: center; padding: 30px 20px; background: var(--primary-light); border-radius: 8px; border: 1px dashed var(--primary); margin-bottom: 20px;">
+          <div style="width: 60px; height: 60px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 24px; cursor: pointer;" onclick="toggleVoice()">
+            <i class="fa-solid fa-microphone" id="mic-icon"></i>
+          </div>
+          <h3 id="voice-status" style="font-size: 16px; margin-bottom: 6px;">Nhấn vào micro để nói chuyện với AI Tutor</h3>
+          <p style="font-size: 13px; color: var(--text-muted);">AI hỗ trợ nhận diện câu hỏi XSTK và trình bày trực quan lên bảng IPAD bên dưới.</p>
+        </div>
+
+        <div class="card">
+          <h4 style="font-size: 14px; margin-bottom: 8px;">Hiển thị trực quan từ lời nói lên bảng IPAD:</h4>
+          <div style="background: #ffffff; border: 1px solid var(--border); border-radius: 8px; padding: 20px; font-family: monospace; font-size: 14px; color: #1e293b;" id="voice-board-output">
+            [AI IPAD Board]: Hãy hỏi AI câu hỏi như "Làm sao phân biệt Phân phối Nhị thức và Phân phối Poisson?"
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TÍNH NĂNG 4: 5 Bài tập tự luận tương tự -->
+    <section id="tab-essay" class="tab-section">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title"><i class="fa-solid fa-arrows-rotate" style="color:var(--primary);"></i> Sinh 5 bài toán tự luận tương tự</span>
+          <button class="btn btn-primary" onclick="generate5Essay()"><i class="fa-solid fa-arrows-rotate"></i> Tạo ngẫu nhiên 5 bài toán</button>
+        </div>
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
+          Hệ thống sinh ra 5 bài toán tương tự để rèn luyện. AI chỉ cung cấp **chiến lược giải**, không đưa lời giải sẵn.
+        </p>
+
+        <div id="essay-list">
+          <!-- Rendered via JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- TÍNH NĂNG 5: Bài tập trắc nghiệm -->
+    <section id="tab-quiz" class="tab-section">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title"><i class="fa-solid fa-circle-question" style="color:var(--primary);"></i> Trắc nghiệm tương tác & Chấm tức thì</span>
+        </div>
+
+        <div style="background: var(--bg-body); padding: 16px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 16px;">
+          <p style="font-weight: 600; font-size: 15px; margin-bottom: 12px;">Câu hỏi 1: Cho biến ngẫu nhiên X ~ N(0, 1). Tính P(X > 0)?</p>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <label style="background: white; padding: 10px; border-radius: 6px; border: 1px solid var(--border); cursor: pointer; font-size: 14px;">
+              <input type="radio" name="q1" value="A"> A. 0.25
+            </label>
+            <label style="background: white; padding: 10px; border-radius: 6px; border: 1px solid var(--border); cursor: pointer; font-size: 14px;">
+              <input type="radio" name="q1" value="B"> B. 0.50
+            </label>
+            <label style="background: white; padding: 10px; border-radius: 6px; border: 1px solid var(--border); cursor: pointer; font-size: 14px;">
+              <input type="radio" name="q1" value="C"> C. 1.00
+            </label>
+          </div>
+          <div style="margin-top: 14px; display: flex; gap: 10px;">
+            <button class="btn btn-primary" onclick="checkQuiz()"><i class="fa-solid fa-check"></i> Nộp bài & Chấm ngay</button>
+            <button class="btn btn-outline" id="btn-why" style="display:none;" onclick="explainQuiz()"><i class="fa-solid fa-circle-info"></i> Truy vấn đáp án "Tại sao?"</button>
+          </div>
+        </div>
+
+        <div id="quiz-explanation" style="display:none;" class="strategy-box">
+          <strong><i class="fa-solid fa-circle-info"></i> Giải đáp tại sao:</strong>
+          Do Phân phối chuẩn N(0,1) đối xứng qua trục x = 0, toàn bộ diện tích dưới đường cong bằng 1. Do đó phần bên phải x > 0 chiếm đúng 50% = 0.50.
+        </div>
+      </div>
+    </section>
+
+    <!-- TÍNH NĂNG 6: Phòng Vấn đáp AI -->
+    <section id="tab-qa" class="tab-section">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title"><i class="fa-solid fa-clipboard-question" style="color:var(--primary);"></i> Vấn đáp Lý thuyết & Chỉ ra sai lầm kiến thức</span>
+        </div>
+
+        <div style="margin-bottom: 16px;">
+          <label style="font-size: 14px; font-weight: 600; display: block; margin-bottom: 6px;">Trả lời câu hỏi vấn đáp từ AI:</label>
+          <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 8px;"><em>AI hỏi: "Khi nào ta áp dụng phân phối Poisson để xấp xỉ phân phối Nhị thức?"</em></p>
+          <textarea id="qaAnswer" style="width: 100%; height: 80px; padding: 10px; border-radius: 8px; border: 1px solid var(--border); font-size: 14px;" placeholder="Nhập câu trả lời vấn đáp của bạn..."></textarea>
+          <button class="btn btn-primary" style="margin-top: 10px;" onclick="submitQA()"><i class="fa-solid fa-paper-plane"></i> Gửi câu trả lời vấn đáp</button>
+        </div>
+
+        <div id="qaFeedback" style="display:none;" class="card">
+          <h4 style="font-size: 14px; color: var(--danger); margin-bottom: 8px;"><i class="fa-solid fa-triangle-exclamation"></i> Phát hiện lỗ hổng kiến thức:</h4>
+          <p style="font-size: 13px; color: var(--text-main); line-height: 1.6;">
+            Bạn ghi "khi n lớn" là chưa đầy đủ. Điều kiện chính xác là <strong>n lớn (n ≥ 50)</strong> VÀ <strong>p rất nhỏ (p ≤ 0.1)</strong> sao cho tích np có giá trị vừa phải (np < 10).
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- TÍNH NĂNG 7: Thống kê câu hỏi sai -->
+    <section id="tab-stats" class="tab-section">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title"><i class="fa-solid fa-chart-pie" style="color:var(--primary);"></i> Thống kê Lỗi sai & Hướng khắc phục</span>
+        </div>
+
+        <div class="grid-3" style="margin-bottom: 20px;">
+          <div style="background: var(--danger-light); border: 1px solid var(--danger); padding: 16px; border-radius: 8px; text-align: center;">
+            <div style="font-size: 24px; font-weight: 700; color: var(--danger);">3</div>
+            <div style="font-size: 12px; color: var(--text-muted);">Sai Vấn đáp Lý thuyết</div>
+          </div>
+          <div style="background: var(--warning-light); border: 1px solid var(--warning); padding: 16px; border-radius: 8px; text-align: center;">
+            <div style="font-size: 24px; font-weight: 700; color: var(--warning);">5</div>
+            <div style="font-size: 12px; color: var(--text-muted);">Sai Trắc nghiệm</div>
+          </div>
+          <div style="background: var(--primary-light); border: 1px solid var(--primary); padding: 16px; border-radius: 8px; text-align: center;">
+            <div style="font-size: 24px; font-weight: 700; color: var(--primary);">2</div>
+            <div style="font-size: 12px; color: var(--text-muted);">Sai Bài tập Tự luận</div>
+          </div>
+        </div>
+
+        <div class="card" style="background: var(--bg-body);">
+          <h4 style="font-size: 14px; margin-bottom: 10px;"><i class="fa-solid fa-compass"></i> Nhận định chung & Hướng khắc phục từ AI:</h4>
+          <ul style="font-size: 13px; line-height: 1.8; color: var(--text-main); padding-left: 20px;">
+            <li><strong>Lỗi phổ biến:</strong> Thường xuyên nhầm lẫn giữa Biến cố độc lập và Biến cố xung khắc.</li>
+            <li><strong>Hướng khắc phục đề xuất:</strong> Thực hành lại 5 bài tập phân biệt $P(A \cap B) = P(A) \cdot P(B)$ và $P(A \cap B) = 0$.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- TÍNH NĂNG 8: Bản đồ tư duy (Mindmap) -->
+    <section id="tab-mindmap" class="tab-section">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title"><i class="fa-solid fa-sitemap" style="color:var(--primary);"></i> Bản đồ tư duy kiến thức Xác suất Thống kê</span>
+        </div>
+
+        <div style="padding: 20px; background: var(--bg-body); border-radius: 8px; border: 1px solid var(--border);">
+          <div class="mindmap-node">XÁC SUẤT THỐNG KÊ</div>
+          
+          <div class="mindmap-tree">
+            <div style="width: 30%;">
+              <div class="mindmap-subnode" style="border-color: var(--primary); font-weight:600; margin-bottom:8px;">1. Lý thuyết Xác suất</div>
+              <div class="mindmap-subnode" style="margin-bottom:4px;">• Biến cố & Không gian mẫu</div>
+              <div class="mindmap-subnode" style="margin-bottom:4px;">• Định lý Bayes</div>
+              <div class="mindmap-subnode">• Phân phối Xác suất</div>
+            </div>
+
+            <div style="width: 30%;">
+              <div class="mindmap-subnode" style="border-color: var(--success); font-weight:600; margin-bottom:8px;">2. Thống kê Mô tả</div>
+              <div class="mindmap-subnode" style="margin-bottom:4px;">• Trung bình, Trung vị, Yếu vị</div>
+              <div class="mindmap-subnode" style="margin-bottom:4px;">• Phương sai & Độ lệch chuẩn</div>
+              <div class="mindmap-subnode">• Biểu đồ Boxplot, Histogram</div>
+            </div>
+
+            <div style="width: 30%;">
+              <div class="mindmap-subnode" style="border-color: var(--warning); font-weight:600; margin-bottom:8px;">3. Thống kê Suy luận</div>
+              <div class="mindmap-subnode" style="margin-bottom:4px;">• Ước lượng Khoảng tin cậy</div>
+              <div class="mindmap-subnode" style="margin-bottom:4px;">• Kiểm định Giả thuyết (t-test)</div>
+              <div class="mindmap-subnode">• Hồi quy tuyến tính</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TÍNH NĂNG 9: Diễn đàn điện tử XSTK -->
+    <section id="tab-forum" class="tab-section">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title"><i class="fa-solid fa-comments" style="color:var(--primary);"></i> Diễn đàn Học tập & Trao đổi XSTK</span>
+          <button class="btn btn-primary" onclick="postForum()"><i class="fa-solid fa-plus"></i> Đăng câu hỏi mới</button>
+        </div>
+
+        <div style="margin-bottom: 16px;">
+          <input type="text" id="forumInput" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); font-size: 14px;" placeholder="Nhập thắc mắc về Xác suất Thống kê để thảo luận cùng cộng đồng...">
+        </div>
+
+        <div id="forum-posts">
+          <div class="forum-post">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+              <span style="font-weight: 600; font-size: 14px;">Nguyễn Văn A</span>
+              <span style="font-size: 12px; color: var(--text-muted);">10 phút trước</span>
+            </div>
+            <p style="font-size: 13px; color: var(--text-main);">Mọi người cho mình hỏi ý nghĩa thực tế của P-value trong kiểm định giả thuyết là gì vậy ạ?</p>
+            <div style="margin-top: 10px; font-size: 12px; color: var(--primary); cursor: pointer;"><i class="fa-regular fa-comment"></i> 3 thảo luận từ AI & bạn học</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TÍNH NĂNG 10: Hồ sơ AI học XSTK -->
+    <section id="tab-profile" class="tab-section">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title"><i class="fa-solid fa-id-card" style="color:var(--primary);"></i> Hồ sơ Năng lực AI Học XSTK Cá nhân</span>
+        </div>
+
+        <div class="grid-2">
+          <div style="border: 1px solid var(--border); padding: 16px; border-radius: 8px;">
+            <h4 style="font-size: 14px; margin-bottom: 12px; color: var(--text-main);"><i class="fa-solid fa-user-check"></i> Chân dung Năng lực Học viên</h4>
+            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 6px;">• Mức độ hiểu Định lý Bayes: <strong style="color: var(--success);">85%</strong></p>
+            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 6px;">• Kỹ năng tính Kỳ vọng / Phương sai: <strong style="color: var(--primary);">70%</strong></p>
+            <p style="font-size: 13px; color: var(--text-muted);">• Kiểm định Giả thuyết: <strong style="color: var(--danger);">45% (Cần bổ trợ)</strong></p>
+          </div>
+
+          <div style="border: 1px solid var(--border); padding: 16px; border-radius: 8px; background: var(--primary-light);">
+            <h4 style="font-size: 14px; margin-bottom: 12px; color: var(--primary);"><i class="fa-solid fa-rocket"></i> Đề xuất Phương án Bổ trợ từ AI</h4>
+            <p style="font-size: 13px; color: var(--text-main); line-height: 1.6;">
+              Dựa vào hồ sơ học tập, AI khuyến nghị bạn dành **20 phút mỗi ngày** hoàn thành 3 bài tập về **Kiểm định t-test** để khắc phục lỗ hổng kiến thức hiện tại.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- JAVASCRIPT FOR INTERACTION -->
+  <script>
+    // Tab switching functionality
+    function switchTab(tabId) {
+      const tabs = document.querySelectorAll('.tab-section');
+      tabs.forEach(tab => tab.classList.remove('active'));
+
+      const links = document.querySelectorAll('.nav-link');
+      links.forEach(link => link.classList.remove('active'));
+
+      document.getElementById(tabId).classList.add('active');
+      event.currentTarget.classList.add('active');
+
+      const titles = {
+        'tab-step4': '1. Quy trình dạy học 4 bước',
+        'tab-tutor': '2. AI Tutor Bảng IPAD & Barem Chấm điểm',
+        'tab-voice': '3. AI Tương tác Giọng nói & IPAD Board',
+        'tab-essay': '4. Sinh 5 Bài tập Tự luận Tương tự',
+        'tab-quiz': '5. Bài tập Trắc nghiệm Chấm tức thì',
+        'tab-qa': '6. Phòng Vấn đáp AI & Lỗ hổng Kiến thức',
+        'tab-stats': '7. Thống kê Câu hỏi Sai & Lỗi sai',
+        'tab-mindmap': '8. Bản đồ Tư duy XSTK',
+        'tab-forum': '9. Diễn đàn Điện tử XSTK',
+        'tab-profile': '10. Hồ sơ AI Học XSTK'
+      };
+      document.getElementById('page-title').innerText = titles[tabId];
+    }
+
+    // Step 4 logic
+    let currentStep = 1;
+    const stepData = [
+      { title: "Bước 1: Khái niệm", content: "Định lý Bayes cho biết mối liên hệ giữa xác suất có điều kiện P(A|B) và P(B|A)." },
+      { title: "Bước 2: Định lý & Công thức", content: "Công thức tổng quát: P(A|B) = [P(B|A) * P(A)] / P(B)." },
+      { title: "Bước 3: Phân tích Barem", content: "Barem điểm chú trọng cách lập luận tìm Xác suất toàn phần P(B) ở mẫu số trước." },
+      { title: "Bước 4: Chiến lược vận dụng", content: "Chiến lược: Vẽ sơ đồ cây biến cố để tránh tính nhầm lẫn giữa các điều kiện." }
+    ];
+
+    function nextStep() {
+      if (currentStep < 4) {
+        currentStep++;
+        updateStepUI();
+      }
+    }
+    function prevStep() {
+      if (currentStep > 1) {
+        currentStep--;
+        updateStepUI();
+      }
+    }
+    function updateStepUI() {
+      for (let i = 1; i <= 4; i++) {
+        const item = document.getElementById(`step-${i}`);
+        if (i <= currentStep) item.classList.add('active');
+        else item.classList.remove('active');
+      }
+      const data = stepData[currentStep - 1];
+      document.getElementById('step-content-box').innerHTML = `
+        <h3 style="margin-bottom: 10px; color: var(--primary);">${data.title}</h3>
+        <p style="font-size: 14px; line-height: 1.6; color: var(--text-main);">${data.content}</p>
+      `;
+    }
+
+    // Canvas drawing on IPAD Whiteboard
+    const canvas = document.getElementById('ipadCanvas');
+    if (canvas) {
+      const ctx = canvas.getContext('2d');
+      let drawing = false;
+
+      function resizeCanvas() {
+        canvas.width = canvas.parentElement.clientWidth;
+        canvas.height = 260;
+        ctx.strokeStyle = '#2563eb';
+        ctx.lineWidth = 2;
+      }
+      resizeCanvas();
+
+      canvas.addEventListener('mousedown', () => drawing = true);
+      canvas.addEventListener('mouseup', () => { drawing = false; ctx.beginPath(); });
+      canvas.addEventListener('mousemove', draw);
+
+      function draw(e) {
+        if (!drawing) return;
+        const rect = canvas.getBoundingClientRect();
+        ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+      }
+    }
+
+    function clearCanvas() {
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    function handleFileUpload(e) {
+      alert("Đã tải lên file bài làm thành công! AI Tutor sẵn sàng chấm theo Barem.");
+    }
+
+    function evaluateHandwriting() {
+      document.getElementById('evalResult').style.display = 'block';
+    }
+
+    // Voice simulation
+    let isListening = false;
+    function toggleVoice() {
+      isListening = !isListening;
+      const status = document.getElementById('voice-status');
+      const mic = document.getElementById('mic-icon');
+      const board = document.getElementById('voice-board-output');
+
+      if (isListening) {
+        status.innerText = "Đang lắng nghe giọng nói...";
+        mic.style.color = "#ef4444";
+        setTimeout(() => {
+          board.innerText = "[AI Voice Tutor]: Đã nhận câu hỏi - 'Phương sai V(X) phản ánh điều gì?'. \n\n[Gợi ý Chiến lược trên IPAD]: Phương sai đo lường độ rủi ro hoặc mức độ phân tán của các giá trị X xung quanh giá trị trung bình E(X).";
+          status.innerText = "Nhấn vào micro để nói chuyện với AI Tutor";
+          mic.style.color = "white";
+          isListening = false;
+        }, 3000);
+      }
+    }
+
+    // Generate 5 essay questions
+    function generate5Essay() {
+      const container = document.getElementById('essay-list');
+      container.innerHTML = '';
+      for (let i = 1; i <= 5; i++) {
+        container.innerHTML += `
+          <div class="card" style="background: var(--bg-body); margin-bottom: 12px; padding: 16px;">
+            <h4 style="font-size: 14px; margin-bottom: 6px;">Bài toán Tự luận ${i}: Tính kỳ vọng rủi ro đầu tư</h4>
+            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 8px;">Một danh mục đầu tư có xác suất sinh lời 60% đạt 100 triệu, 40% lỗ 20 triệu. Tính kỳ vọng lợi nhuận.</p>
+            <div class="strategy-box" style="margin-top:6px; padding: 10px; font-size: 12px;">
+              <strong><i class="fa-solid fa-lightbulb"></i> Chiến lược giải từ AI:</strong> Lập bảng phân phối xác suất biến ngẫu nhiên X, sau đó áp dụng công thức E(X) = ∑ x_i * p_i.
+            </div>
+          </div>
+        `;
+      }
+    }
+    generate5Essay();
+
+    // Quiz logic
+    function checkQuiz() {
+      const selected = document.querySelector('input[name="q1"]:checked');
+      if (selected && selected.value === 'B') {
+        alert("Chính xác! Đáp án B (0.50).");
+      } else {
+        alert("Chưa chính xác. Hãy nhấn nút 'Tại sao?' bên dưới để xem giải thích.");
+      }
+      document.getElementById('btn-why').style.display = 'inline-flex';
+    }
+
+    function explainQuiz() {
+      document.getElementById('quiz-explanation').style.display = 'block';
+    }
+
+    // QA logic
+    function submitQA() {
+      const val = document.getElementById('qaAnswer').value;
+      if (!val) {
+        alert("Vui lòng nhập câu trả lời vấn đáp.");
+        return;
+      }
+      document.getElementById('qaFeedback').style.display = 'block';
+    }
+
+    // Forum post logic
+    function postForum() {
+      const val = document.getElementById('forumInput').value;
+      if (!val) return;
+      const posts = document.getElementById('forum-posts');
+      posts.innerHTML = `
+        <div class="forum-post">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+            <span style="font-weight: 600; font-size: 14px;">Bạn (Học viên)</span>
+            <span style="font-size: 12px; color: var(--text-muted);">Vừa xong</span>
+          </div>
+          <p style="font-size: 13px; color: var(--text-main);">${val}</p>
+          <div style="margin-top: 10px; font-size: 12px; color: var(--primary); cursor: pointer;"><i class="fa-regular fa-comment"></i> 0 thảo luận</div>
+        </div>
+      ` + posts.innerHTML;
+      document.getElementById('forumInput').value = '';
+    }
+  </script>
+</body>
+</html>
